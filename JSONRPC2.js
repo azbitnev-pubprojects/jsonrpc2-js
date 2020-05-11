@@ -1,14 +1,5 @@
-﻿/*
- * This file is part of the JSONRPC2-JS package.
- *
- * (c) Andrey Zbitnev <azbitnev@gmail.com>
- *
- * For the full copyright and license information, please view the LICENSE
- * file that was distributed with this source code.
- */
-
 //
-// Version 0.5
+// jsonrpc2-js v1
 //
 
 'use strict'
@@ -31,92 +22,92 @@ const JSONRPC2 = (() => {
 
 		function isValidCode(code) {
 
-		    if (MIN_CODE_SERVER_ERROR <= code && code <= MAX_CODE_SERVER_ERROR) {
-		        return true
-		    }
+			if (MIN_CODE_SERVER_ERROR <= code && code <= MAX_CODE_SERVER_ERROR) {
+				return true
+			}
 
-		    switch (code) {
-		        case CODE_PARSE_ERROR:
-		        case CODE_INVALID_REQUEST:
-		        case CODE_METHOD_NOT_FOUND:
-		        case CODE_INVALID_PARAMETERS:
-		        case CODE_INTERNAL_ERROR:
-		            return true
-		    }
+			switch (code) {
+				case CODE_PARSE_ERROR:
+				case CODE_INVALID_REQUEST:
+				case CODE_METHOD_NOT_FOUND:
+				case CODE_INVALID_PARAMETERS:
+				case CODE_INTERNAL_ERROR:
+					return true
+			}
 
-		    return false
+			return false
 		}
 
 		class GenericError extends Error {
 
-		    constructor(code, message, data = null) {
+			constructor(code, message, data = null) {
 
 				if (!isValidCode(code)) {
 					throw new Error(`Invalid error code ${code}.`)
 				}
 
-		        super(message)
+				super(message)
 
-		        Object.defineProperty(this, 'code', {
-		            enumerable: true,
-		            value: code
-		        })
+				Object.defineProperty(this, 'code', {
+					enumerable: true,
+					value: code
+				})
 
-		        Object.defineProperty(this, 'message', {
-		            enumerable: true,
-		            value: message
-		        })
+				Object.defineProperty(this, 'message', {
+					enumerable: true,
+					value: message
+				})
 
-		        Object.defineProperty(this, 'data', {
-		            enumerable: true,
-		            value: data
-		        })
-		    }
+				Object.defineProperty(this, 'data', {
+					enumerable: true,
+					value: data
+				})
+			}
 		}
 
 		class ParseError extends GenericError {
 
-		    constructor(data = null) {
-		        super(CODE_PARSE_ERROR, 'Parse error', data)
-		    }
+			constructor(data = null) {
+				super(CODE_PARSE_ERROR, 'Parse error', data)
+			}
 		}
 
 		class InvalidRequestError extends GenericError {
 
-		    constructor(data = null) {
-		        super(CODE_INVALID_REQUEST, 'Invalid Request', data)
-		    }
+			constructor(data = null) {
+				super(CODE_INVALID_REQUEST, 'Invalid Request', data)
+			}
 		}
 
 		class MethodNotFoundError extends GenericError {
 
-		    constructor(data = null) {
-		        super(CODE_METHOD_NOT_FOUND, 'Method not found', data)
-		    }
+			constructor(data = null) {
+				super(CODE_METHOD_NOT_FOUND, 'Method not found', data)
+			}
 		}
 
 		class InvalidParametersError extends GenericError {
 
-		    constructor(data = null) {
-		        super(CODE_INVALID_PARAMETERS, 'Invalid params', data)
-		    }
+			constructor(data = null) {
+				super(CODE_INVALID_PARAMETERS, 'Invalid params', data)
+			}
 		}
 
 		class InternalError extends GenericError {
 
-		    constructor(data = null) {
-		        super(CODE_INTERNAL_ERROR, 'Internal error', data)
-		    }
+			constructor(data = null) {
+				super(CODE_INTERNAL_ERROR, 'Internal error', data)
+			}
 		}
 
 		class ServerError extends GenericError {
 
-		    constructor(code, data = null) {
-		        if (!(MIN_CODE_SERVER_ERROR <= code && code <= MAX_CODE_SERVER_ERROR)) {
-		            throw new RangeError(`Code ${code} is out of range of defined codes for this type of error.`)
-		        }
-		        super(code, 'Server error', data)
-		    }
+			constructor(code, data = null) {
+				if (!(MIN_CODE_SERVER_ERROR <= code && code <= MAX_CODE_SERVER_ERROR)) {
+					throw new RangeError(`Code ${code} is out of range of defined codes for this type of error.`)
+				}
+				super(code, 'Server error', data)
+			}
 		}
 
 		return {
@@ -158,21 +149,21 @@ const JSONRPC2 = (() => {
 
 			return class Request {
 
-			    constructor(method, params = undefined, id = undefined) {
+				constructor(method, params = undefined, id = undefined) {
 
-			        Object.defineProperty(this, 'jsonrpc', {
-			            enumerable: true,
-			            value: VERSION
-			        })
+					Object.defineProperty(this, 'jsonrpc', {
+						enumerable: true,
+						value: VERSION
+					})
 
-			        this.method = method
-			        this.params = params
-			        this.id = id
-			    }
+					this.method = method
+					this.params = params
+					this.id = id
+				}
 
-			    static getNextID() {
-			        return nextRequestID ++
-			    }
+				static getNextID() {
+					return nextRequestID ++
+				}
 			}
 
 		})()
@@ -183,21 +174,21 @@ const JSONRPC2 = (() => {
 
 		class Response {
 
-		    constructor(result, id = undefined) {
+			constructor(result, id = undefined) {
 
-		        Object.defineProperty(this, 'jsonrpc', {
-		            enumerable: true,
-		            value: VERSION
-		        })
+				Object.defineProperty(this, 'jsonrpc', {
+					enumerable: true,
+					value: VERSION
+				})
 
-		        if (result instanceof Errors.GenericError) {
-		            this.error = result
-		        } else {
-		            this.result = result
-		        }
+				if (result instanceof Errors.GenericError) {
+					this.error = result
+				} else {
+					this.result = result
+				}
 
-		        this.id = id
-		    }
+				this.id = id
+			}
 		}
 
 		//
@@ -206,39 +197,39 @@ const JSONRPC2 = (() => {
 
 		class Batch {
 
-		    constructor(requests = []) {
+			constructor(requests = []) {
 
-		        if (!(requests instanceof Array)) {
-		            throw new TypeError('Unexpected type of requests.')
-		        }
+				if (!(requests instanceof Array)) {
+					throw new TypeError('Unexpected type of requests.')
+				}
 
-		        requests.forEach(item => {
-		            if (!(item instanceof Request)) {
-		                throw new TypeError('Unexpected type of request.')
-		            }
-		        })
+				requests.forEach(item => {
+					if (!(item instanceof Request)) {
+						throw new TypeError('Unexpected type of request.')
+					}
+				})
 
-		        this.requests = requests
-		    }
+				this.requests = requests
+			}
 
-		    call(method, params = undefined) {
+			call(method, params = undefined) {
 
-		        this.requests.push(new Request(method, params, Request.getNextID()))
+				this.requests.push(new Request(method, params, Request.getNextID()))
 				return this
-		    }
+			}
 
-		    notify(method, params = undefined) {
+			notify(method, params = undefined) {
 
-		        this.requests.push(new Request(method, params))
+				this.requests.push(new Request(method, params))
 				return this
-		    }
+			}
 
-		    end() {
+			end() {
 
-		        let batch = this.requests
-		        this.requests = []
-		        return batch
-		    }
+				let batch = this.requests
+				this.requests = []
+				return batch
+			}
 		}
 
 		//
@@ -247,17 +238,17 @@ const JSONRPC2 = (() => {
 
 		class Client {
 
-		    call(method, params = undefined) {
-		        return new Request(method, params, Request.getNextID())
-		    }
+			call(method, params = undefined) {
+				return new Request(method, params, Request.getNextID())
+			}
 
-		    notify(method, params = undefined) {
-		        return new Request(method, params)
-		    }
+			notify(method, params = undefined) {
+				return new Request(method, params)
+			}
 
-		    batch() {
-		        return new Batch()
-		    }
+			batch() {
+				return new Batch()
+			}
 		}
 
 		//
@@ -268,75 +259,75 @@ const JSONRPC2 = (() => {
 
 			function processRequest(request) {
 
-			    let id = (request.id !== undefined ? request.id : null);
-			    let method = request.method
-			    let parameters = (request.params !== undefined ? request.params : []);
+				let id = (request.id !== undefined ? request.id : null);
+				let method = request.method
+				let parameters = (request.params !== undefined ? request.params : []);
 
-			    try {
+				try {
 
-			        let result = evaluate.call(this, method, parameters)
-			        return new Response(result, id)
+					let result = evaluate.call(this, method, parameters)
+					return new Response(result, id)
 
-			    } catch (e) {
+				} catch (e) {
 
-			        let error = (e instanceof Errors.GenericError ? e : new Errors.InternalError(e))
-			        return new Response(error, id)
-			    }
+					let error = (e instanceof Errors.GenericError ? e : new Errors.InternalError(e))
+					return new Response(error, id)
+				}
 			}
 
 			function processBatch(requests) {
 
-			    return requests.map(request => processRequest.call(this, request))
+				return requests.map(request => processRequest.call(this, request))
 			}
 
 			function evaluate(method, parameters) {
 
-			    if (!(method in this.methods) || !(method in this.parameters)) {
-			        throw new Errors.MethodNotFoundError()
-			    }
+				if (!(method in this.methods) || !(method in this.parameters)) {
+					throw new Errors.MethodNotFoundError()
+				}
 
-			    let args = []
-			    if (parameters instanceof Array) {
-			        args = parameters
-			    } else {
-			        this.parameters[method].forEach(name => args.push(parameters[name]))
-			    }
+				let args = []
+				if (parameters instanceof Array) {
+					args = parameters
+				} else {
+					this.parameters[method].forEach(name => args.push(parameters[name]))
+				}
 
-			    return this.methods[method].apply(null, args)
+				return this.methods[method].apply(null, args)
 			}
 
 			return class Server {
 
-			    constructor() {
+				constructor() {
 
-			        this.methods = { }
-			        this.parameters = { }
-			    }
+					this.methods = { }
+					this.parameters = { }
+				}
 
-			    on(method, parameters, fn) {
+				on(method, parameters, fn) {
 
-			        this.methods[method] = fn
-			        this.parameters[method] = parameters
-			    }
+					this.methods[method] = fn
+					this.parameters[method] = parameters
+				}
 
-			    off(method) {
+				off(method) {
 
-			        delete this.methods[method]
-			        delete this.parameters[method]
-			    }
+					delete this.methods[method]
+					delete this.parameters[method]
+				}
 
-			    reply(request) {
+				reply(request) {
 
-			        let response
+					let response
 
-			        if (request instanceof Array) {
-			            response = processBatch.call(this, request)
-			        } else {
-			            response = processRequest.call(this, request)
-			        }
+					if (request instanceof Array) {
+						response = processBatch.call(this, request)
+					} else {
+						response = processRequest.call(this, request)
+					}
 
-			        return response
-			    }
+					return response
+				}
 
 			}
 
@@ -355,404 +346,404 @@ const JSONRPC2 = (() => {
 
 	})()
 
-    //
-    // Transports
-    //
-
-    const Transports = (() => {
-
-        function validateResponse(response) {
-
-            if (typeof response !== 'object') {
-                throw new Error('Invalid response. Object expected.')
-            }
-
-            if (response.jsonrpc !== Protocol.VERSION) {
-                throw new Error('Invalid response. Unsupported version of protocol.')
-            }
-
-            if (response.id !== undefined) {
-                if (response.id !== null && typeof response.id !== 'number' && typeof response.id !== 'string') {
-                    throw new Error('Invalid response. Unexpected type of identifier.')
-                }
-            }
-
-        	if (response.error !== undefined && response.result !== undefined) {
-        		throw new Error('Invalid response. Controversial properties.')
-        	}
-
-        	if (response.error !== undefined) {
+	//
+	// Transports
+	//
+
+	const Transports = (() => {
+
+		function validateResponse(response) {
+
+			if (typeof response !== 'object') {
+				throw new Error('Invalid response. Object expected.')
+			}
+
+			if (response.jsonrpc !== Protocol.VERSION) {
+				throw new Error('Invalid response. Unsupported version of protocol.')
+			}
+
+			if (response.id !== undefined) {
+				if (response.id !== null && typeof response.id !== 'number' && typeof response.id !== 'string') {
+					throw new Error('Invalid response. Unexpected type of identifier.')
+				}
+			}
+
+			if (response.error !== undefined && response.result !== undefined) {
+				throw new Error('Invalid response. Controversial properties.')
+			}
+
+			if (response.error !== undefined) {
 
-        		if (typeof response.error !== 'object'
-        		|| typeof response.error.code !== 'number'
-        		|| typeof response.error.message !== 'string') {
-        			throw new Error('Invalid response. Invalid format of error desriptor.')
-        		}
-        		
-        		return new Protocol.Response(
-        			new Errors.GenericError(
-        				response.error.code,
-        				response.error.message,
-        				response.error.data
-        			),
-        			response.id
-        		)
-        	}
-
-        	if (response.result === undefined) {
-        		throw new Error('Invalid response. Result expected.')
-        	}
+				if (typeof response.error !== 'object'
+				|| typeof response.error.code !== 'number'
+				|| typeof response.error.message !== 'string') {
+					throw new Error('Invalid response. Invalid format of error desriptor.')
+				}
+				
+				return new Protocol.Response(
+					new Errors.GenericError(
+						response.error.code,
+						response.error.message,
+						response.error.data
+					),
+					response.id
+				)
+			}
+
+			if (response.result === undefined) {
+				throw new Error('Invalid response. Result expected.')
+			}
 
-        	return new Protocol.Response(response.result, response.id)
-        }
+			return new Protocol.Response(response.result, response.id)
+		}
 
-        class AbstractTransport {
+		class AbstractTransport {
 
-            encodeRequest(request) {
+			encodeRequest(request) {
 
-                return JSON.stringify(request)
-            }
+				return JSON.stringify(request)
+			}
 
-            decodeResponse(encodedResponse) {
+			decodeResponse(encodedResponse) {
 
-        		let response = JSON.parse(encodedResponse)
+				let response = JSON.parse(encodedResponse)
 
-                if (response instanceof Array) {
-                    return response.map(item => validateResponse(item))
-                }
+				if (response instanceof Array) {
+					return response.map(item => validateResponse(item))
+				}
 
-                return validateResponse(response)
-            }
+				return validateResponse(response)
+			}
 
-            verifyMatching(request, response) {
+			verifyMatching(request, response) {
 
-                if (request instanceof Array) {
+				if (request instanceof Array) {
 
-                    if (!(response instanceof Array)) {
-                        throw new Error('Unexpected response. Array expected, but single response was received.')
-                    }
+					if (!(response instanceof Array)) {
+						throw new Error('Unexpected response. Array expected, but single response was received.')
+					}
 
-                    request.forEach(request => {
-                        if (request.id !== null && request.id !== undefined) {
-                            let found = response.some(response => request.id === response.id)
-                            if (!found) {
-                                throw new Error('Array of responses does not contains all IDs of request.')
-                            }
-                        }
-                    })
+					request.forEach(request => {
+						if (request.id !== null && request.id !== undefined) {
+							let found = response.some(response => request.id === response.id)
+							if (!found) {
+								throw new Error('Array of responses does not contains all IDs of request.')
+							}
+						}
+					})
 
-                    response.forEach(response => {
-                        let found = request.some(
-                            request =>
-                                request.id !== null && request.id !== undefined && request.id === response.id
-                        )
-                        if (!found) {
-                            throw new Error('Unexcepted ID of response.')
-                        }
-                    })
+					response.forEach(response => {
+						let found = request.some(
+							request =>
+								request.id !== null && request.id !== undefined && request.id === response.id
+						)
+						if (!found) {
+							throw new Error('Unexcepted ID of response.')
+						}
+					})
 
-                } else {
+				} else {
 
-                    if (response instanceof Array) {
-                        throw new Error('Unexpected response. Single response expected, but array of responses was received.')
-                    }
+					if (response instanceof Array) {
+						throw new Error('Unexpected response. Single response expected, but array of responses was received.')
+					}
 
-                    if (request.id !== null && request.id !== undefined && request.id !== response.id) {
-                        throw new Error('ID of response does not match with ID of request.')
-                    }
-                }
-            }
+					if (request.id !== null && request.id !== undefined && request.id !== response.id) {
+						throw new Error('ID of response does not match with ID of request.')
+					}
+				}
+			}
 
-            reply(request) {
+			reply(request) {
 
-        		return new Promise((resove, reject) => {
-        			throw 'Trying to call an abstract method.'
-        		})
-            }
-        }
+				return new Promise((resove, reject) => {
+					throw 'Trying to call an abstract method.'
+				})
+			}
+		}
 
-        //
-        // HTTP
-        //
+		//
+		// HTTP
+		//
 
-        class HTTP extends AbstractTransport {
+		class HTTP extends AbstractTransport {
 
-            constructor(endpoint, options, fetchImpl) {
+			constructor(endpoint, options, fetchImpl) {
 
-                super()
+				super()
 
-                this.setEndpoint(endpoint)
-                this.setOptions(options)
+				this.setEndpoint(endpoint)
+				this.setOptions(options)
 
-                try {
-                    // try to use native implementation, if it's possible
-                    if (fetchImpl === undefined && typeof fetch === 'function') {
-                        fetchImpl = (endpoint, opts) => fetch(endpoint, opts)
-                    }
-                } catch (e) {
-                }
+				try {
+					// try to use native implementation, if it's possible
+					if (fetchImpl === undefined && typeof fetch === 'function') {
+						fetchImpl = (endpoint, opts) => fetch(endpoint, opts)
+					}
+				} catch (e) {
+				}
 
-                if (typeof fetchImpl !== 'function') {
-                    throw new TypeError('Unexpected reference to implementation of Fetch API.')
-                }
+				if (typeof fetchImpl !== 'function') {
+					throw new TypeError('Unexpected reference to implementation of Fetch API.')
+				}
 
-                this.fetchImpl = fetchImpl
-            }
+				this.fetchImpl = fetchImpl
+			}
 
-            setEndpoint(endpoint) {
+			setEndpoint(endpoint) {
 
-                this.endpoint = endpoint
-            }
+				this.endpoint = endpoint
+			}
 
-            setOptions(options = { }) {
+			setOptions(options = { }) {
 
-                if (options.headers === undefined) {
-                    options.headers = {
-                        'Content-Type': 'application/json'
-                    }
-                }
+				if (options.headers === undefined) {
+					options.headers = {
+						'Content-Type': 'application/json'
+					}
+				}
 
-                if (options.cache === undefined) {
-                    options.cache = 'no-cache'
-                }
+				if (options.cache === undefined) {
+					options.cache = 'no-cache'
+				}
 
-                options.method = 'POST'
+				options.method = 'POST'
 
-                this.options = options
-            }
+				this.options = options
+			}
 
-            async reply(request) {
+			async reply(request) {
 
-                let opts = Object.assign({ }, this.options, { body: this.encodeRequest(request) })
-                let httpResponse = await this.fetchImpl(this.endpoint, opts)
-                let response = this.decodeResponse(await httpResponse.text())
+				let opts = Object.assign({ }, this.options, { body: this.encodeRequest(request) })
+				let httpResponse = await this.fetchImpl(this.endpoint, opts)
+				let response = this.decodeResponse(await httpResponse.text())
 
-                this.verifyMatching(request, response)
+				this.verifyMatching(request, response)
 
-                return response
-            }
-        }
+				return response
+			}
+		}
 
-        //
-        // WebSockets
-        //
+		//
+		// WebSockets
+		//
 
-        const WebSockets = (() => {
+		const WebSockets = (() => {
 
-            let nextID = 1
+			let nextID = 1
 
-            function reconnect() {
+			function reconnect() {
 
-                setTimeout(
-                    () => {
-                        initSocket.call(this)
-                    },
-                    this.options.reconnectTimeout
-                )
-            }
+				setTimeout(
+					() => {
+						initSocket.call(this)
+					},
+					this.options.reconnectTimeout
+				)
+			}
 
-            function initSocket() {
+			function initSocket() {
 
-               	this.socket = new this.WebSocketImpl(this.endpoint)
+			   	this.socket = new this.WebSocketImpl(this.endpoint)
 
-            	this.socket.onmessage = (evt) => {
+				this.socket.onmessage = (evt) => {
 
-                    let response = this.decodeResponse(evt.data)
+					let response = this.decodeResponse(evt.data)
 
-                    for (let id in this.queue) {
+					for (let id in this.queue) {
 
-                        try {
+						try {
 
-                            let item = this.queue[id]
-                            if (!item.sent) {
-                                continue
-                            }
+							let item = this.queue[id]
+							if (!item.sent) {
+								continue
+							}
 
-                            this.verifyMatching(item.request, response)
+							this.verifyMatching(item.request, response)
 
-                            delete this.queue[id]
-                            item.resolve(response)
-                            return
+							delete this.queue[id]
+							item.resolve(response)
+							return
 
-                        } catch (e) {
-                        }
-                    }
+						} catch (e) {
+						}
+					}
 
-                    throw new Error('Unidentified response.')
-            	}
+					throw new Error('Unidentified response.')
+				}
 
-            	this.socket.onopen = (evt) => {
+				this.socket.onopen = (evt) => {
 
-                    for (let id in this.queue) {
-                        let item = this.queue[id]
-                        if (!item.sent) {
-                            item.sent = true
-                            this.socket.send(this.encodeRequest(item.request))
-                        }
-                    }
-            	}
+					for (let id in this.queue) {
+						let item = this.queue[id]
+						if (!item.sent) {
+							item.sent = true
+							this.socket.send(this.encodeRequest(item.request))
+						}
+					}
+				}
 
-                if (this.options.reconnect) {
-                	this.socket.onclose = () => reconnect.call(this)
-                }
-            }
+				if (this.options.reconnect) {
+					this.socket.onclose = () => reconnect.call(this)
+				}
+			}
 
-            return class WebSockets extends AbstractTransport {
+			return class WebSockets extends AbstractTransport {
 
-                constructor(endpoint, options = { }, WebSocketImpl) {
+				constructor(endpoint, options = { }, WebSocketImpl) {
 
-                    super()
+					super()
 
-                    try {
-                        // try to use native implementation, if it's possible
-                        if (WebSocketImpl === undefined && typeof WebSocket === 'function') {
-                            WebSocketImpl = WebSocket
-                        }
-                    } catch (e) {
-                    }
+					try {
+						// try to use native implementation, if it's possible
+						if (WebSocketImpl === undefined && typeof WebSocket === 'function') {
+							WebSocketImpl = WebSocket
+						}
+					} catch (e) {
+					}
 
-                    if (typeof WebSocketImpl !== 'function') {
-                        throw new TypeError('Unexpected reference to implementation of WebSocket API.')
-                    }
+					if (typeof WebSocketImpl !== 'function') {
+						throw new TypeError('Unexpected reference to implementation of WebSocket API.')
+					}
 
-                    this.WebSocketImpl = WebSocketImpl
-                    this.endpoint = endpoint
-                    this.queue = { }
+					this.WebSocketImpl = WebSocketImpl
+					this.endpoint = endpoint
+					this.queue = { }
 
-                    this.setOptions(options)
+					this.setOptions(options)
 
-                    if (!this.options.coldStart) {
-                        initSocket.call(this)
-                    }
-                }
+					if (!this.options.coldStart) {
+						initSocket.call(this)
+					}
+				}
 
-                setOptions(options = { }) {
+				setOptions(options = { }) {
 
-                    if (options.coldStart === undefined) {
-                        options.coldStart = false
-                    }
+					if (options.coldStart === undefined) {
+						options.coldStart = false
+					}
 
-                    if (options.reconnectTimeout === undefined) {
-                        options.reconnectTimeout = 2000
-                    }
+					if (options.reconnectTimeout === undefined) {
+						options.reconnectTimeout = 2000
+					}
 
-                    if (options.reconnect === undefined) {
-                        options.reconnect = false
-                    }
+					if (options.reconnect === undefined) {
+						options.reconnect = false
+					}
 
-                    this.options = options
-                }
+					this.options = options
+				}
 
-                reply(request) {
+				reply(request) {
 
-                    let id = nextID ++
+					let id = nextID ++
 
-                    if (!this.socket && this.options.coldStart) {
-                        initSocket.call(this)
-                    }
+					if (!this.socket && this.options.coldStart) {
+						initSocket.call(this)
+					}
 
-                    return new Promise(resolve => {
+					return new Promise(resolve => {
 
-                        let hasConnection = this.socket && this.socket.readyState === this.WebSocketImpl.OPEN
+						let hasConnection = this.socket && this.socket.readyState === this.WebSocketImpl.OPEN
 
-                        this.queue[id] = {
-                            request,
-                            resolve,
-                            sent: hasConnection
-                        }
+						this.queue[id] = {
+							request,
+							resolve,
+							sent: hasConnection
+						}
 
-                        if (hasConnection) {
-                            this.socket.send(this.encodeRequest(request))
-                        }
-                    })
+						if (hasConnection) {
+							this.socket.send(this.encodeRequest(request))
+						}
+					})
 
-                }
+				}
 
-            }
+			}
 
-        })()
+		})()
 
-        return {
+		return {
 
-            AbstractTransport,
-            HTTP,
-            WebSockets
-        }
-
-    })()
-
-    //
-    // RemoteObject
-    //
-
-	const RemoteObject = (() => {
-
-        class CallableBatch extends Protocol.Batch {
-
-            constructor(remoteObject) {
-                super()
-                this.remoteObject = remoteObject
-            }
-
-            end() {
-                let requests = super.end()
-                return this.remoteObject.transport.reply(requests)
-            }
-        }
-
-        return class RemoteObject extends Protocol.Client {
-
-            constructor(transport) {
-
-                super()
-
-                this.setTransport(transport)
-            }
-
-            setTransport(transport) {
-
-                if (!(transport instanceof Transports.AbstractTransport)) {
-                    throw new Error('Unexpected transport instace.')
-                }
-
-                this.transport = transport
-            }
-
-    	    call(method, params = undefined) {
-
-                let request = super.call(method, params)
-                return this.transport.reply(request)
-    	    }
-
-    	    notify(method, params = undefined) {
-
-                let request = super.notify(method, params)
-                return this.transport.reply(request)
-    	    }
-
-    	    batch() {
-
-    	        return new CallableBatch(this)
-    	    }
-        }
+			AbstractTransport,
+			HTTP,
+			WebSockets
+		}
 
 	})()
 
-    //
-    // RemoteProxyObject
-    //
+	//
+	// RemoteObject
+	//
 
-    class RemoteProxyObject {
+	const RemoteObject = (() => {
 
-        constructor(transport) {
+		class CallableBatch extends Protocol.Batch {
+
+			constructor(remoteObject) {
+				super()
+				this.remoteObject = remoteObject
+			}
+
+			end() {
+				let requests = super.end()
+				return this.remoteObject.transport.reply(requests)
+			}
+		}
+
+		return class RemoteObject extends Protocol.Client {
+
+			constructor(transport) {
+
+				super()
+
+				this.setTransport(transport)
+			}
+
+			setTransport(transport) {
+
+				if (!(transport instanceof Transports.AbstractTransport)) {
+					throw new Error('Unexpected transport instace.')
+				}
+
+				this.transport = transport
+			}
+
+			call(method, params = undefined) {
+
+				let request = super.call(method, params)
+				return this.transport.reply(request)
+			}
+
+			notify(method, params = undefined) {
+
+				let request = super.notify(method, params)
+				return this.transport.reply(request)
+			}
+
+			batch() {
+
+				return new CallableBatch(this)
+			}
+		}
+
+	})()
+
+	//
+	// RemoteProxyObject
+	//
+
+	class RemoteProxyObject {
+
+		constructor(transport) {
 
 			let remoteObject = new RemoteObject(transport)
 
-            return new Proxy({ }, {
+			return new Proxy({ }, {
 
-                get(target, name) {
+				get(target, name) {
 
-                    return async function () {
+					return async function () {
 
 						let params = Array.prototype.slice.call(arguments)
 						let response = await remoteObject.call(name, params)
@@ -770,11 +761,11 @@ const JSONRPC2 = (() => {
 						}
 
 						return response.result
-                    }
-                }
-            })
-        }
-    }
+					}
+				}
+			})
+		}
+	}
 
 	//
 	// ServerObject
@@ -784,53 +775,53 @@ const JSONRPC2 = (() => {
 
 		function validateRequest(request) {
 
-		    if (typeof request !== 'object') {
-		        throw new Errors.InvalidRequestError('Request is not an object.')
-		    }
+			if (typeof request !== 'object') {
+				throw new Errors.InvalidRequestError('Request is not an object.')
+			}
 
-		    if (request.jsonrpc !== Protocol.VERSION) {
-		        throw new Errors.InvalidRequestError('Unsupported version of protocol.')
-		    }
+			if (request.jsonrpc !== Protocol.VERSION) {
+				throw new Errors.InvalidRequestError('Unsupported version of protocol.')
+			}
 
-		    if (typeof request.method !== 'string') {
-		        throw new Errors.InvalidRequestError('Method is not defined.')
-		    }
+			if (typeof request.method !== 'string') {
+				throw new Errors.InvalidRequestError('Method is not defined.')
+			}
 
-		    if (request.id !== undefined) {
-		        if (request.id !== null && typeof request.id !== 'number' && typeof request.id !== 'string') {
-		            throw new Errors.InvalidRequestError('Unexpected type of identifier.')
-		        }
-		    }
+			if (request.id !== undefined) {
+				if (request.id !== null && typeof request.id !== 'number' && typeof request.id !== 'string') {
+					throw new Errors.InvalidRequestError('Unexpected type of identifier.')
+				}
+			}
 
-		    if (request.params !== undefined && typeof request.params !== 'object') {
-		        throw new Errors.InvalidRequestError('Unexpected parameters.')
-		    }
+			if (request.params !== undefined && typeof request.params !== 'object') {
+				throw new Errors.InvalidRequestError('Unexpected parameters.')
+			}
 
-		    return new Protocol.Request(request.method, request.params, request.id)
+			return new Protocol.Request(request.method, request.params, request.id)
 		}
 
 		return class ServerObject extends Protocol.Server {
 
-		    reply(encodedRequest) {
+			reply(encodedRequest) {
 
-		        let request
+				let request
 
-		        try {
-		            request = JSON.parse(encodedRequest)
-		        } catch (e) {
-		            throw new Errors.ParseError(e)
-		        }
+				try {
+					request = JSON.parse(encodedRequest)
+				} catch (e) {
+					throw new Errors.ParseError(e)
+				}
 
-		        if (request instanceof Array) {
-		            request = request.map(item => validateRequest(item))
-		        } else {
+				if (request instanceof Array) {
+					request = request.map(item => validateRequest(item))
+				} else {
 					request = validateRequest(request)
 				}
 
-		        let response = super.reply(request)
+				let response = super.reply(request)
 
 				return JSON.stringify(response)
-		    }
+			}
 		}
 
 	})()
@@ -842,9 +833,9 @@ const JSONRPC2 = (() => {
 	return {
 
 		Protocol,
-        Transports,
+		Transports,
 
-        RemoteObject,
+		RemoteObject,
 		RemoteProxyObject,
 		ServerObject
 	}
@@ -856,8 +847,8 @@ const JSONRPC2 = (() => {
 //
 
 try {
-    if (typeof module !== undefined) {
-    	module.exports = JSONRPC2
-    }
+	if (typeof module !== undefined) {
+		module.exports = JSONRPC2
+	}
 } catch (e) {
 }

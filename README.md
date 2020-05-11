@@ -13,7 +13,7 @@ A simple JSON-RPC 2.0 implementation
 - Write some unit tests
 - Write better API docs
 
-Read [API] documentation for more details.
+Read [API.md] documentation for more details.
 
 ## Examples
 
