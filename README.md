@@ -24,13 +24,13 @@ Read [API documentation](API.md) for more details.
 (async () => {
 
 	let remoteMath = new JSONRPC2.RemoteProxyObject(
-	    // using JSON RPC over HTTP
-	    new JSONRPC2.Transports.HTTP(
-	        'http://anywhere.host/some/endpoint',
-	         {
-	            mode: 'cors'
-	         }
-	    )
+		// using JSON RPC over HTTP
+		new JSONRPC2.Transports.HTTP(
+			'http://anywhere.host/some/endpoint',
+			 {
+				mode: 'cors'
+			 }
+		)
 	)
 
 	console.log(await remoteMath.substract(50, 23)) // substract is a remote method
@@ -49,13 +49,13 @@ Read [API documentation](API.md) for more details.
 (async () => {
 
 	let remoteMath = new JSONRPC2.RemoteObject(
-	    // using JSON RPC over HTTP
-	    new JSONRPC2.Transports.HTTP(
-	        'http://anywhere.host/some/endpoint',
-	         {
-	            mode: 'cors'
-	         }
-	    )
+		// using JSON RPC over HTTP
+		new JSONRPC2.Transports.HTTP(
+			'http://anywhere.host/some/endpoint',
+			 {
+				mode: 'cors'
+			 }
+		)
 	)
 
 	console.log(await remoteMath.call('substract', { subtrahend: 23, minuend: 50 }))
@@ -86,11 +86,11 @@ Read [API documentation](API.md) for more details.
 let server = new JSONRPC2.ServerObject()
 
 server.on(
-    'substract',
-    [ 'minuend', 'subtrahend' ],
-    function (minuend, subtrahend) {
-        return minuend - subtrahend
-    }
+	'substract',
+	[ 'minuend', 'subtrahend' ],
+	function (minuend, subtrahend) {
+		return minuend - subtrahend
+	}
 )
 
 http.createServer(function (request, response) {
@@ -102,11 +102,11 @@ http.createServer(function (request, response) {
 		'Access-Control-Max-Age': '5',
 	}
 
-    let requestText = ''
+	let requestText = ''
 
-    if (request.method === 'OPTIONS') {
+	if (request.method === 'OPTIONS') {
 
-        request.on('end', function () {
+		request.on('end', function () {
 
 			response.writeHead(200, headers)
 			response.end('')
@@ -114,37 +114,37 @@ http.createServer(function (request, response) {
 
 	} else if (request.method === 'POST') {
 
-        request.on('data', function (data) {
+		request.on('data', function (data) {
 
-            requestText += data
-        })
+			requestText += data
+		})
 
-        request.on('end', function () {
+		request.on('end', function () {
 
 			headers['Content-Type'] = 'application/json'
 
 			response.writeHead(200, headers)
-            response.end(server.reply(requestText))
-        })
+			response.end(server.reply(requestText))
+		})
 
-    } else if (request.method === 'GET') {
+	} else if (request.method === 'GET') {
 
-        request.on('end', function () {
+		request.on('end', function () {
 
 			headers['Content-Type'] = 'text/plain; charset=utf-8'
 
 			response.writeHead(200, headers)
-    	    response.end('Use requests with method POST.\nИспользуйте запросы методом POST.\n')
-        })
+			response.end('Use requests with method POST.\nИспользуйте запросы методом POST.\n')
+		})
 
 	} else {
 
 		headers['Content-Type'] = 'text/plain; charset=utf-8'
 
 		response.writeHead(405, headers)
-	    response.end(`Method ${request.method} is not allowed.`)
+		response.end(`Method ${request.method} is not allowed.`)
 	}
-    
+	
 }).listen(port)
 
 ```
