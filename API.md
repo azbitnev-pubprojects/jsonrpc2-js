@@ -9,13 +9,13 @@ JSONRPC2-js API Documentation
 
 ## For Node.js users
 
-```ecmascript
+```javascript
 const JSONRPC2 = require('/path/too/your/copy/JSONRPC2.js')
 ```
 
 ## Basic example
 
-```ecmascript
+```javascript
 ;;;
 
 (async () => {
@@ -154,7 +154,7 @@ Returns:
 `JSONRPC2.Protocol.Server` - this server's instance to use chain calls.
 
 Example:
-```ecmascript
+```javascript
 server.on(
     'substract',
     [ 'minuend', 'subtrahend' ],
@@ -175,7 +175,7 @@ Returns:
 `JSONRPC2.Protocol.Server` - this server's instance to use chain calls.
 
 Example:
-```ecmascript
+```javascript
 server.off('substract')
 ```
 
@@ -336,7 +336,7 @@ Parameters:
 `fetchImpl` - A function that implements Fetch API. Optional.
 
 Example for browsers:
-```ecmascript
+```javascript
 // create transport
 let transport = new JSONRPC2.Transports.HTTP(
 	'http://some.where/point',
@@ -347,7 +347,7 @@ let transport = new JSONRPC2.Transports.HTTP(
 ```
 
 Example for Node.js users:
-```ecmascript
+```javascript
 // use external implementation of Fetch API
 // npm install node-fetch
 const nodeFetch = require('node-fetch')
@@ -397,7 +397,7 @@ Options:
 `reconnectTimeout` - timeout in milliseconds before reconnection.
 
 Example for browsers:
-```ecmascript
+```javascript
 // create transport
 let transport = new JSONRPC2.Transports.WebSockets(
 	'ws://some.where:3000/point',
@@ -408,7 +408,7 @@ let transport = new JSONRPC2.Transports.WebSockets(
 ```
 
 Example for Node.js users:
-```ecmascript
+```javascript
 // use external implementation of WebSocket API
 // npm install ws
 const WebSocket = require('ws');
@@ -486,7 +486,7 @@ Returns:
 `JSONRPC2.Protocol.CallableBatch` - An object which contains all requests of the batch.
 
 Example:
-```ecmascript
+```javascript
 
 (async () => {
 
@@ -539,7 +539,7 @@ Parameters:
 `transport` - An instance of implementation of `JSONRPC2.Transports.AbstractTransport`.
 
 Example:
-```ecmascript
+```javascript
 (async () => {
 
 	let obj = new JSONRPC2.RemoteProxyObject(

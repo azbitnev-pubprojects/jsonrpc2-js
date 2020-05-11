@@ -19,7 +19,7 @@ Read [API documentation](API.md) for more details.
 
 ### Typical client (works in browser or Node.js)
 
-```ecmascript
+```javascript
 
 (async () => {
 
@@ -44,7 +44,7 @@ Read [API documentation](API.md) for more details.
 
 ### More flexible client (works in browser or Node.js)
 
-```ecmascript
+```javascript
 
 (async () => {
 
@@ -81,9 +81,9 @@ Read [API documentation](API.md) for more details.
 
 ### Server (Node.js)
 
-```ecmascript
+```javascript
 
-let server = new JSONRPC2.LocalServer()
+let server = new JSONRPC2.ServerObject()
 
 server.on(
     'substract',
