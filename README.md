@@ -13,7 +13,7 @@ A simple JSON-RPC 2.0 implementation
 - Write some unit tests
 - Write better API docs
 
-Read [API.md] documentation for more details.
+Read [API documentation](API.md) for more details.
 
 ## Examples
 
@@ -23,7 +23,7 @@ Read [API.md] documentation for more details.
 
 (async () => {
 
-	let remoteMath = new JSONRPC2.ProxyObject(
+	let remoteMath = new JSONRPC2.RemoteProxyObject(
 	    // using JSON RPC over HTTP
 	    new JSONRPC2.Transports.HTTP(
 	        'http://anywhere.host/some/endpoint',
