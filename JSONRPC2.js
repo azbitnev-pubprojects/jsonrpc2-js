@@ -161,9 +161,21 @@ const JSONRPC2 = (() => {
 					this.id = id
 				}
 
+				isCall() {
+
+					return this.id !== undefined && this.id !== null;
+				}
+
+				isNotification() {
+
+					return !this.isCall();
+				}
+
 				static getNextID() {
+
 					return nextRequestID ++
 				}
+
 			}
 
 		})()
@@ -188,6 +200,20 @@ const JSONRPC2 = (() => {
 				}
 
 				this.id = id
+			}
+
+			hasError() {
+
+				return this.error !== undefined
+			}
+
+			getError() {
+
+				if (this.hasError()) {
+					return this.error
+				}
+
+				return null
 			}
 		}
 
@@ -397,6 +423,19 @@ const JSONRPC2 = (() => {
 			return new Protocol.Response(response.result, response.id)
 		}
 
+		function isResponseIsRequired(request) {
+
+			let required = false
+
+			if (request instanceof Array) {
+				required = request.some(request => request.isCall())
+			} else if (request.isCall()) {
+				required = true
+			}
+
+			return required
+		}
+
 		class AbstractTransport {
 
 			encodeRequest(request) {
@@ -418,6 +457,10 @@ const JSONRPC2 = (() => {
 			verifyMatching(request, response) {
 
 				if (request instanceof Array) {
+
+					if (response === null) {
+						response = [ ]
+					}
 
 					if (!(response instanceof Array)) {
 						throw new Error('Unexpected response. Array expected, but single response was received.')
@@ -444,17 +487,39 @@ const JSONRPC2 = (() => {
 
 				} else {
 
-					if (response instanceof Array) {
-						throw new Error('Unexpected response. Single response expected, but array of responses was received.')
-					}
+					if (request.isCall()) {
 
-					if (request.id !== null && request.id !== undefined && request.id !== response.id) {
-						throw new Error('ID of response does not match with ID of request.')
+						if (response instanceof Array) {
+							throw new Error('Unexpected response. Single response expected, but array of responses was received.')
+						}
+
+						if (response === null) {
+							throw new Error('Response expected. Request represents a call, not notification.')
+						}
+
+						if (request.id !== response.id) {
+							throw new Error('ID of response does not match with ID of request.')
+						}
 					}
 				}
 			}
 
-			reply(request) {
+			async reply(request) {
+
+				let stringRequest = this.encodeRequest(request)
+				let stringResponse = await this.getResponse(stringRequest)
+				let response = null
+
+				if (isResponseIsRequired(request)) {
+					response = this.decodeResponse(stringResponse)
+				}
+
+				this.verifyMatching(request, response)
+
+				return response
+			}
+
+			getResponse(stringRequest) {
 
 				return new Promise((resove, reject) => {
 					throw 'Trying to call an abstract method.'
@@ -512,16 +577,13 @@ const JSONRPC2 = (() => {
 				this.options = options
 			}
 
-			async reply(request) {
+			async getResponse(stringRequest) {
 
-				let opts = Object.assign({ }, this.options, { body: this.encodeRequest(request) })
+				let opts = Object.assign({ }, this.options, { body: stringRequest })
 				let httpResponse = await this.fetchImpl(this.endpoint, opts)
-				let response = this.decodeResponse(await httpResponse.text())
-
-				this.verifyMatching(request, response)
-
-				return response
+				return await httpResponse.text()
 			}
+
 		}
 
 		//
@@ -548,7 +610,7 @@ const JSONRPC2 = (() => {
 
 				this.socket.onmessage = (evt) => {
 
-					let response = this.decodeResponse(evt.data)
+					let stringResponse = evt.data
 
 					for (let id in this.queue) {
 
@@ -559,10 +621,8 @@ const JSONRPC2 = (() => {
 								continue
 							}
 
-							this.verifyMatching(item.request, response)
-
 							delete this.queue[id]
-							item.resolve(response)
+							item.resolve(stringResponse)
 							return
 
 						} catch (e) {
@@ -578,7 +638,7 @@ const JSONRPC2 = (() => {
 						let item = this.queue[id]
 						if (!item.sent) {
 							item.sent = true
-							this.socket.send(this.encodeRequest(item.request))
+							this.socket.send(item.stringRequest)
 						}
 					}
 				}
@@ -634,7 +694,7 @@ const JSONRPC2 = (() => {
 					this.options = options
 				}
 
-				reply(request) {
+				getResponse(stringRequest) {
 
 					let id = nextID ++
 
@@ -647,13 +707,13 @@ const JSONRPC2 = (() => {
 						let hasConnection = this.socket && this.socket.readyState === this.WebSocketImpl.OPEN
 
 						this.queue[id] = {
-							request,
+							stringRequest,
 							resolve,
 							sent: hasConnection
 						}
 
 						if (hasConnection) {
-							this.socket.send(this.encodeRequest(request))
+							this.socket.send(stringRequest)
 						}
 					})
 
@@ -812,13 +872,67 @@ const JSONRPC2 = (() => {
 					throw new Errors.ParseError(e)
 				}
 
+				let response = null
+
 				if (request instanceof Array) {
-					request = request.map(item => validateRequest(item))
+
+					if (request.length <= 0) {
+
+						response = new Protocol.Response(new Errors.InvalidRequestError('An empty array was sent as request.'))
+
+					} else {
+
+						response = []
+
+						request.forEach(request_ => {
+
+							let response_ = null
+
+							try {
+
+					   			request_ = validateRequest(request_)
+								response_ = super.reply(request_)
+
+							} catch (error) {
+
+								if (error instanceof Errors.GenericError) {
+									response_ = new Response(error)
+								} else {
+									throw error
+								}
+							}
+
+							if (response_ !== null) {
+								response.push(response_)
+							}
+
+						})
+
+						if (response.length <= 0) {
+							response = null
+						}
+					}
+
 				} else {
-					request = validateRequest(request)
+
+					try {
+
+			   			request = validateRequest(request)
+						response = super.reply(request)
+
+					} catch (error) {
+
+						if (error instanceof Errors.GenericError) {
+							response = new Protocol.Response(error)
+						} else {
+							throw error
+						}
+					}
 				}
 
-				let response = super.reply(request)
+				if (response === null) {
+					return ''
+				}
 
 				return JSON.stringify(response)
 			}
