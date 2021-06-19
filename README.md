@@ -12,6 +12,7 @@ A simple JSON-RPC 2.0 implementation
 - Write more examples
 - Write some unit tests
 - Write better API docs
+- Build a package for NPM
 
 Read [API documentation](API.md) for more details.
 
@@ -26,7 +27,7 @@ Read [API documentation](API.md) for more details.
 	let remoteMath = new JSONRPC2.RemoteProxyObject(
 		// using JSON RPC over HTTP
 		new JSONRPC2.Transports.HTTP(
-			'http://anywhere.host/some/endpoint',
+			'https://anywhere.host/some/endpoint', // http:// available too
 			 {
 				mode: 'cors'
 			 }
@@ -51,7 +52,7 @@ Read [API documentation](API.md) for more details.
 	let remoteMath = new JSONRPC2.RemoteObject(
 		// using JSON RPC over HTTP
 		new JSONRPC2.Transports.HTTP(
-			'http://anywhere.host/some/endpoint',
+			'https://anywhere.host/some/endpoint', // http:// available too
 			 {
 				mode: 'cors'
 			 }
@@ -85,6 +86,9 @@ Read [API documentation](API.md) for more details.
 
 let server = new JSONRPC2.ServerObject()
 
+//
+// define a function for remote using
+//
 server.on(
 	'substract',
 	[ 'minuend', 'subtrahend' ],
@@ -93,6 +97,9 @@ server.on(
 	}
 )
 
+//
+// simple server
+//
 http.createServer(function (request, response) {
 
 	let headers = {
