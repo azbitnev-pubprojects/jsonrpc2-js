@@ -22,7 +22,7 @@ const JSONRPC2 = require('/path/too/your/copy/JSONRPC2.js')
 
 	let obj = new JSONRPC2.RemoteProxyObject(
 	    new JSONRPC2.Transports.HTTP(
-	        'http://some.where/api/endpoint',
+	        'https://some.where/api/endpoint', // http:// available too
 	         {
 	            mode: 'cors'
 	         }
