@@ -339,7 +339,7 @@ Example for browsers:
 ```javascript
 // create transport
 let transport = new JSONRPC2.Transports.HTTP(
-	'http://some.where/point',
+	'https://some.where/point', // http:// available too
 	{
 		mode: 'cors'
 	}
@@ -354,7 +354,7 @@ const nodeFetch = require('node-fetch')
 
 // create transport
 let transport = new JSONRPC2.Transports.HTTP(
-	'http://some.where/point',
+	'https://some.where/point', // http:// available too
 	{
 		mode: 'cors'
 	},
@@ -400,7 +400,7 @@ Example for browsers:
 ```javascript
 // create transport
 let transport = new JSONRPC2.Transports.WebSockets(
-	'ws://some.where:3000/point',
+	'wss://some.where:3000/point', // ws:// available too
 	{
 		reconnect: true
 	}
@@ -415,7 +415,7 @@ const WebSocket = require('ws');
 
 // create transport
 let transport = new JSONRPC2.Transports.HTTP(
-	'http://some.where/point',
+	'https://some.where/point', // http:// available too
 	{
 		mode: 'cors'
 	},
@@ -492,7 +492,7 @@ Example:
 
 	let remoteMath = new JSONRPC2.RemoteObject(
 	    new JSONRPC2.Transports.HTTP(
-	        'http://anywhere.host/some/endpoint'
+	        'https://anywhere.host/some/endpoint' // http:// available too
 	    )
 	)
 	
@@ -544,7 +544,7 @@ Example:
 
 	let obj = new JSONRPC2.RemoteProxyObject(
 	    new JSONRPC2.Transports.WebSockets(
-	        'ws://some.where/endpoint'
+	        'wss://some.where/endpoint' // ws:// available too
 	    )
 	)
 
